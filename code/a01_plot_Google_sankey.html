@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script src="js/xepOnline.jqPlugin.js"></script>
+    <div id="Google_chart">
+     <div id="sankey_multiple" style="width: 900px; height: 900px;"></div>
+   </div>
+    <script type="text/javascript">
+
+        function AddNamespace(){
+          var svg = jQuery('#chart_div svg');
+          svg.attr("xmlns", "http://www.w3.org/2000/svg");
+          svg.css('overflow','visible');
+        }
+        console.log("start loading..");
+        $.getJSON("../data/links.json", function(links) {
+            // console.dir(links);
+            google.charts.load('current', {'packages':['sankey']});
+            google.charts.setOnLoadCallback(drawChart);
+
+            function AddNamespace(){
+              var svg = $('#sankey_multiple svg');
+              svg.attr("xmlns", "http://www.w3.org/2000/svg");
+              svg.css('overflow','visible');
+            }
+
+            function drawChart() {
+              var data = new google.visualization.DataTable();
+              data.addColumn('string', 'From');
+              data.addColumn('string', 'To');
+              data.addColumn('number', 'Weight');
+              data.addRows(links);
+
+              var colors = ['#a6cee3', '#b2df8a', '#fb9a99', '#fdbf6f',
+                  '#cab2d6', '#ffff99', '#1f78b4', '#33a02c'];
+
+              // Sets chart options.
+              var options = {
+                    width: 900,
+                    sankey: { 
+                      node: {
+                              label:{
+                                fontSize: 18,
+                              },
+                              width: 5 ,
+                   },
+                  link:{
+                    colorMode: 'source'
+                  }
+                     },
+                  };
+
+              // Instantiates and draws our chart, passing in some options.
+              var chart = new google.visualization.Sankey(document.getElementById('sankey_multiple'));
+                 google.visualization.events.addListener(chart, 'ready', AddNamespace);
+
+              chart.draw(data, options);
+
+          }
+          var click="return xepOnline.Formatter.Format('Google_chart', {render:'download', srctype:'svg'})";
+          jQuery('#buttons').append('<button onclick="'+ click +'">PDF</button>');
+          <!-- Convert the SVG to PNG@120dpi and open it -->
+          click="return xepOnline.Formatter.Format('Google_chart', {render:'newwin', mimeType:'image/png', resolution:'120', srctype:'svg'})";
+          jQuery('#buttons').append('<button onclick="'+ click +'">PNG @120dpi</button>');
+          <!-- Convert the SVG to JPG@300dpi and open it -->
+          click="return xepOnline.Formatter.Format('Google_chart', {render:'newwin', mimeType:'image/jpg', resolution:'300', srctype:'svg'})";
+          jQuery('#buttons').append('<button onclick="'+ click +'">JPG @300dpi</button>');
+
+        });
+
+
+      </script>
+    </script>
+  </head>
+  <body>
+    <!-- <input id="save-pdf" type="button" value="Save as PDF" disabled /> -->
+<div id="buttons" class="buttons"></div>
+  </body>
+</html>

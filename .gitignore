@@ -1,0 +1,6 @@
+
+# sublime temp stuff
+.fuse_hidden*
+
+# jupyter notebook stuff
+.ipynb_checkpoints
